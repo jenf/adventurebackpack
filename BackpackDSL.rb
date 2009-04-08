@@ -1,18 +1,27 @@
 require 'singleton'
 module Backpack
-  class Room
-    attr_accessor :short_description, :description
-
-    def initialize(name, manager,options)
-      @name, @manager, @options = name, manager, options
-    end
+  class BackpackObject
     def metaclass
       class << self; self; end
     end
     def define_method(name, &block)
       metaclass.send(:define_method, name, &block)
     end
+  end
 
+  class Item < BackpackObject
+    attr_accessor :short_description, :description, :aka
+    def initialize(name,manager,options)
+      @name, @manager, @options = name, manager, options
+    end
+  end
+
+  class Room < BackpackObject
+    attr_accessor :short_description, :description, :contains
+
+    def initialize(name, manager,options)
+      @name, @manager, @options = name, manager, options
+    end
     def exits
       exits = []
       methods.each do |x|
@@ -40,6 +49,12 @@ module Backpack
       @current = @rooms[name] = Room.new(name, self, options)
       instance_eval(&block)
     end
+
+    def define_item(name, options={}, &block)
+      @current = @rooms[name] = Item.new(name, self, options)
+      instance_eval(&block)
+    end
+
 
     def start_room(name, options={})
       @startroom=name
@@ -118,6 +133,10 @@ module Backpack
       @roommanager.define_room(name,options,&block)
     end
 
+    def item(name, options={}, &block)
+      @roommanager.define_item(name,options,&block)
+    end
+
     def start_room(name, options={})
       @roommanager.start_room(name,options)
     end
@@ -145,12 +164,12 @@ end
 module Backpack
   class Configuration
     def run
-		  puts @roommanager.inspect
       currentroom=@roommanager.startroom
       while true
         h=@roommanager[currentroom]
         puts h.description 
         puts "Exits : %s" % (h.exits.inspect)
+        puts "You can see : %s" % h.contains.collect {|x| @roommanager[x].short_description} if h.contains != nil
         j = $stdin.readline.strip
         if h.exits.include? j
           currentroom = h.send("exit_"+j)
