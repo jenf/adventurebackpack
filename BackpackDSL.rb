@@ -16,10 +16,10 @@ module Backpack
     def exits
       exits = []
       methods.each do |x|
-	a = x.match(/^exit_([a-zA-Z_]*$)/)
-	if a != nil
-	  exits << a[1]
-	end
+              a = x.match(/^exit_([a-zA-Z_]*$)/)
+              if a != nil
+                exits << a[1]
+              end
       end
       return exits
     end
@@ -48,38 +48,38 @@ module Backpack
 
     def autoinvert_paths
       inverse = {"east"=>"west" , "north" =>"south",
-	"northeast" => "southwest", "northwest" => "southeast",
-	"up" => "down"}
+                 "northeast" => "southwest", "northwest" => "southeast",
+                 "up" => "down"}
       # Fill in the inverse of the list
       inverse.each {|x,y| inverse[y]=x}
       @rooms.each {|x,y|
-	y.methods.each {|v|
-	  if v =~ /exit_([a-zA-Z_]*)$/
-	    dir = $1
-	    if inverse.include? dir
-	      # get room destination
-	      destination = y.send(v)
-	      @current = @rooms[destination]
-	      self.send("exit_"+inverse[dir],x)
-	    end
-	    puts $1
-	  end
-	}
+        y.methods.each {|v|
+          if v =~ /exit_([a-zA-Z_]*)$/
+            dir = $1
+            if inverse.include? dir
+              # get room destination
+              destination = y.send(v)
+              @current = @rooms[destination]
+              self.send("exit_"+inverse[dir],x)
+            end
+            puts $1
+          end
+        }
       }
       puts inverse.inspect
     end
     def method_missing(sym, *args, &block)
       v=sym.to_s
       if v =~ /exit_([a-zA-Z_]*$)/
-	var = args[0]
-	@current.define_method(sym) {var}
-	puts v
+        var = args[0]
+        @current.define_method(sym) {var}
+        puts v
       else
-	if @current.respond_to?(v+"=")
-	  @current.send(v+'=', *args, &block)
-	else
-	  super
-	end
+        if @current.respond_to?(v+"=")
+          @current.send(v+'=', *args, &block)
+        else
+          super
+        end
       end
     end
   end
@@ -98,21 +98,21 @@ module Backpack
       return unless args.empty?
 
       if block
-	raise 'Loading a block requires 2 parameters' unless args.empty?
-	load(options.merge(:proc => block))
+        raise 'Loading a block requires 2 parameters' unless args.empty?
+        load(options.merge(:proc => block))
 
       elsif options[:file]
-	file = options[:file]
-	load :string => File.read(file), :name => options[:name] || file
+        file = options[:file]
+        load :string => File.read(file), :name => options[:name] || file
 
       elsif options[:string]
-	instance_eval(options[:string], options[:name] || "<eval>")
+        instance_eval(options[:string], options[:name] || "<eval>")
 
       elsif options[:proc]
-	instance_eval(&options[:proc])
+        instance_eval(&options[:proc])
 
       else
-	raise ArgumentError, "Don't know how to load #{options.inspect}"
+        raise ArgumentError, "Don't know how to load #{options.inspect}"
       end
     end
 
@@ -150,15 +150,15 @@ module Backpack
     def run
       currentroom=@roomcreator.startroom
       while true
-	h=@roomcreator[currentroom]
-	puts h.description 
-	puts "Exits : %s" % (h.exits.inspect)
-	j = $stdin.readline.strip
-	if h.exits.include? j
-	  currentroom = h.send("exit_"+j)
-	else
-	  puts "Invalid exit"
-	end
+        h=@roomcreator[currentroom]
+        puts h.description 
+        puts "Exits : %s" % (h.exits.inspect)
+        j = $stdin.readline.strip
+        if h.exits.include? j
+          currentroom = h.send("exit_"+j)
+        else
+          puts "Invalid exit"
+        end
       end
     end
   end
