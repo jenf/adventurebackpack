@@ -8,7 +8,7 @@ room :Forest do
  description "Through the dense foliage, you glimpse a building to the west."
              "A track heads to the northeast."
  short_description "Deep in the forest"
- exit_north_east :Clearing
+ exit_northeast :Clearing
 end
 
 room :Clearing do
