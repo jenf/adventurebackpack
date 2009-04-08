@@ -25,7 +25,6 @@ module Backpack
     end
   end
   class RoomManager
-    include Singleton
     attr_reader :rooms, :startroom
     def initialize
       @rooms = {}
@@ -66,7 +65,6 @@ module Backpack
           end
         }
       }
-      puts inverse.inspect
     end
     def method_missing(sym, *args, &block)
       v=sym.to_s
@@ -84,12 +82,11 @@ module Backpack
     end
   end
   class Configuration
-    include Singleton
     attr_reader :load_paths
 
     def initialize() 
       @load_paths = ['.']
-      @roomcreator = RoomManager.instance
+      @roommanager = RoomManager.new
     end
 
     def load(*args, &block)
@@ -117,40 +114,41 @@ module Backpack
     end
 
     def room(name, options={}, &block)
-      @roomcreator.define_room(name,options,&block)
+		  puts name
+      @roommanager.define_room(name,options,&block)
     end
 
     def start_room(name, options={})
-      @roomcreator.start_room(name,options)
+      @roommanager.start_room(name,options)
     end
     def finalise
-      @roomcreator.autoinvert_paths
-    end
-    def run
-      j=@roomcreator.startroom
-      puts @roomcreator[j].inspect
+      @roommanager.autoinvert_paths
     end
   end
 end
 
 module Backpack
-  def self.configuration
-    Backpack::Configuration.instance
-  end
-  def self.go
+ class World
+  attr_reader :configuration
+  def initialize
+	 @configuration = Backpack::Configuration.new
+	end
+  def go
     configuration.load(ARGV[0])
     configuration.finalise
     configuration.run
     #    configuration.run
   end
+ end
 end
 
 module Backpack
   class Configuration
     def run
-      currentroom=@roomcreator.startroom
+		  puts @roommanager.inspect
+      currentroom=@roommanager.startroom
       while true
-        h=@roomcreator[currentroom]
+        h=@roommanager[currentroom]
         puts h.description 
         puts "Exits : %s" % (h.exits.inspect)
         j = $stdin.readline.strip
