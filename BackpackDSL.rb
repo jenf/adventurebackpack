@@ -10,17 +10,19 @@ module Backpack
   end
 
   class Item < BackpackObject
-    attr_accessor :short_description, :description, :aka
-    def initialize(name,manager,options)
+    attr_accessor :short_description, :description, :name
+    def initialize(name, short_description, manager,options)
       @name, @manager, @options = name, manager, options
+      @short_description = short_description
     end
   end
 
   class Room < BackpackObject
     attr_accessor :short_description, :description, :contains
 
-    def initialize(name, manager,options)
+    def initialize(name, short_description, manager,options)
       @name, @manager, @options = name, manager, options
+      @short_description = short_description
     end
     def exits
       exits = []
@@ -45,13 +47,13 @@ module Backpack
       return @rooms[x]
     end
 
-    def define_room(name, options={}, &block)
-      @current = @rooms[name] = Room.new(name, self, options)
+    def define_room(name, shortdesc, options={}, &block)
+      @current = @rooms[name] = Room.new(name, shortdesc, self, options)
       instance_eval(&block)
     end
 
-    def define_item(name, options={}, &block)
-      @current = @rooms[name] = Item.new(name, self, options)
+    def define_item(name, shortdesc, options={}, &block)
+      @current = @rooms[name] = Item.new(name, shortdesc, self, options)
       instance_eval(&block)
     end
 
@@ -76,7 +78,6 @@ module Backpack
               @current = @rooms[destination]
               self.send("exit_"+inverse[dir],x)
             end
-            puts $1
           end
         }
       }
@@ -86,7 +87,6 @@ module Backpack
       if v =~ /exit_([a-zA-Z_]*$)/
         var = args[0]
         @current.define_method(sym) {var}
-        puts v
       else
         if @current.respond_to?(v+"=")
           @current.send(v+'=', *args, &block)
@@ -128,13 +128,12 @@ module Backpack
       end
     end
 
-    def room(name, options={}, &block)
-		  puts name
-      @roommanager.define_room(name,options,&block)
+    def room(name, shortdesc, options={}, &block)
+      @roommanager.define_room(name,shortdesc, options,&block)
     end
 
-    def item(name, options={}, &block)
-      @roommanager.define_item(name,options,&block)
+    def item(name, shortdesc, options={}, &block)
+      @roommanager.define_item(name,shortdesc, options,&block)
     end
 
     def start_room(name, options={})
