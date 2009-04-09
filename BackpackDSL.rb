@@ -1,8 +1,14 @@
 require 'singleton'
 module Backpack
   class BackpackObject
+    attr_accessor :short_description, :description, :contains
     def metaclass
       class << self; self; end
+    end
+    def initialize(name, short_description, manager, options)
+      @name, @manager, @options = name, manager, options
+      @short_description = short_description
+      @contains = []
     end
     def define_method(name, &block)
       metaclass.send(:define_method, name, &block)
@@ -10,19 +16,16 @@ module Backpack
   end
 
   class Item < BackpackObject
-    attr_accessor :short_description, :description, :name
+    attr_accessor :name
     def initialize(name, short_description, manager,options)
-      @name, @manager, @options = name, manager, options
-      @short_description = short_description
+      super
     end
   end
 
   class Room < BackpackObject
-    attr_accessor :short_description, :description, :contains
 
     def initialize(name, short_description, manager,options)
-      @name, @manager, @options = name, manager, options
-      @short_description = short_description
+      super
     end
     def exits
       exits = []
@@ -50,13 +53,20 @@ module Backpack
     def define_room(name, shortdesc, options={}, &block)
       @current = @rooms[name] = Room.new(name, shortdesc, self, options)
       instance_eval(&block)
+      return @current
     end
 
     def define_item(name, shortdesc, options={}, &block)
       @current = @rooms[name] = Item.new(name, shortdesc, self, options)
       instance_eval(&block)
+      return @current
     end
 
+    def item(name, shortdesc, options={}, &block)
+      j = @current
+      j.contains << define_item(name, shortdesc, options, &block)
+      @current = j
+    end
 
     def start_room(name, options={})
       @startroom=name
@@ -168,7 +178,7 @@ module Backpack
         h=@roommanager[currentroom]
         puts h.description 
         puts "Exits : %s" % (h.exits.inspect)
-        puts "You can see : %s" % h.contains.collect {|x| @roommanager[x].short_description} if h.contains != nil
+        puts "You can see : %s" % h.contains.collect {|x| x.short_description} if h.contains.size != 0
         j = $stdin.readline.strip
         if h.exits.include? j
           currentroom = h.send("exit_"+j)
