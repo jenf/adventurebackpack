@@ -16,6 +16,7 @@ room :Forest, "Deep in the forest" do
  description "Through the dense foliage, you glimpse a building to the west."
              "A track heads to the northeast."
  exit_northeast :Clearing
+ 
  item :Bird, "Baby bird" do
   description "Too young to fly, the nestling tweets helplessly."
   name ["baby","bird","nestling"]

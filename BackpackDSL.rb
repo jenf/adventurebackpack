@@ -1,6 +1,7 @@
 require 'singleton'
 module Backpack
   class BackpackObject
+    attr_reader :manager
     attr_accessor :short_description, :description, :contains
     def metaclass
       class << self; self; end
@@ -12,6 +13,9 @@ module Backpack
     end
     def define_method(name, &block)
       metaclass.send(:define_method, name, &block)
+    end
+    def add_exit(sym,roomto)
+      define_method(sym) {@manager[roomto]}
     end
   end
 
@@ -84,19 +88,20 @@ module Backpack
             dir = $1
             if inverse.include? dir
               # get room destination
-              destination = y.send(v)
-              @current = @rooms[destination]
+              @current = y.send(v)
               self.send("exit_"+inverse[dir],x)
             end
           end
         }
       }
     end
+
+
     def method_missing(sym, *args, &block)
       v=sym.to_s
       if v =~ /exit_([a-zA-Z_]*$)/
         var = args[0]
-        @current.define_method(sym) {var}
+        @current.add_exit(sym,var)
       else
         if @current.respond_to?(v+"=")
           @current.send(v+'=', *args, &block)
@@ -156,26 +161,26 @@ module Backpack
 end
 
 module Backpack
- class World
-  attr_reader :configuration
-  def initialize
-	 @configuration = Backpack::Configuration.new
-	end
-  def go
-    configuration.load(ARGV[0])
-    configuration.finalise
-    configuration.run
-    #    configuration.run
+  class World
+    attr_reader :configuration
+    def initialize
+      @configuration = Backpack::Configuration.new
+    end
+    def go
+      configuration.load(ARGV[0])
+      configuration.finalise
+      configuration.run
+      #    configuration.run
+    end
   end
- end
 end
 
 module Backpack
   class Configuration
     def run
-      currentroom=@roommanager.startroom
+      currentroom=@roommanager[@roommanager.startroom]
       while true
-        h=@roommanager[currentroom]
+        h=currentroom
         puts h.description 
         puts "Exits : %s" % (h.exits.inspect)
         puts "You can see : %s" % h.contains.collect {|x| x.short_description} if h.contains.size != 0
