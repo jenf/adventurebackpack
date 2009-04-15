@@ -3,10 +3,10 @@ module Parser
   def self.included(base)
     base.extend ParserReal
   end
-  
+
   def run_parse(obj,verbs,tokens)
-      exceptions = []
-      verbs.each do |verb|
+    exceptions = []
+    verbs.each do |verb|
       if verb.verb == tokens[0]
         begin
           # Currently assumes that the first match is good.
@@ -18,19 +18,19 @@ module Parser
           exceptions << [verb, $!]
         end
       end
-      end
-      raise ParserError,exceptions if exceptions.size!=0
-      return nil
+    end
+    raise ParserError,exceptions if exceptions.size!=0
+    return nil
   end
-  
+
   def collect_verbs()
-   verbs=[]
-   j=self.class
-   while defined? j.verblist and j.verblist != nil
-    verbs.push(*j.verblist)
-    j = j.superclass
-   end
-   return verbs
+    verbs=[]
+    j=self.class
+    while defined? j.verblist and j.verblist != nil
+      verbs.push(*j.verblist)
+      j = j.superclass
+    end
+    return verbs
   end
   def try_parse(tokens)
     verbs = collect_verbs
@@ -105,10 +105,10 @@ module Parser
     attr_reader :verblist
 
     def verb(verb,*args)
-#      puts self.inspect
+      #      puts self.inspect
       @verblist = [] if not defined? @verblist
       method = args.pop
-#      puts args.inspect
+      #      puts args.inspect
       @verblist << Verb.new(verb,method,args)
     end
 
