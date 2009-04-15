@@ -26,10 +26,6 @@ class Bee < BackpackItem
 end
 
 class Jay < BackpackItem
-  verb "check", primarynoun, noun, :something
-  def something(x)
-    puts "Something %s" % x.inspect
-  end
 end
 
 class Player < BackpackObject
@@ -53,6 +49,7 @@ class ParserTest < Test::Unit::TestCase
  def test_examine
   assert_nil parse("examine")
   assert_equal [:examine, @objects["bee"], []], parse("examine bee")
+  assert_equal [:examine, @objects["jay"], []], parse("examine jay")
   assert_nil parse("examine bee bee")
   assert_nil parse("examine fred")
  end

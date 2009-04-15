@@ -26,8 +26,8 @@ module Parser
   def collect_verbs()
     verbs=[]
     j=self.class
-    while defined? j.verblist and j.verblist != nil
-      verbs.push(*j.verblist)
+    while defined? j.verblist
+      verbs.push(*j.verblist) if j.verblist != nil
       j = j.superclass
     end
     return verbs
