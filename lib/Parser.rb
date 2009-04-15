@@ -3,8 +3,38 @@ module Parser
   def self.included(base)
     base.extend ParserReal
   end
+  
+  def run_parse(obj,verbs,tokens)
+      exceptions = []
+      verbs.each do |verb|
+      if verb.verb == tokens[0]
+        begin
+          # Currently assumes that the first match is good.
+          return verb.try_parse(obj, tokens)
+        rescue InternalParserError
+          puts $!.inspect
+        rescue Exception
+          puts $!.inspect
+          exceptions << [verb, $!]
+        end
+      end
+      end
+      raise ParserError,exceptions if exceptions.size!=0
+      return nil
+  end
+  
+  def collect_verbs()
+   verbs=[]
+   j=self.class
+   while defined? j.verblist and j.verblist != nil
+    verbs.push(*j.verblist)
+    j = j.superclass
+   end
+   return verbs
+  end
   def try_parse(tokens)
-    self.class.try_parse(self,tokens)
+    verbs = collect_verbs
+    self.run_parse(self,verbs,tokens)
   end
 
   # Errors that are internal and not to be shown to the user (wrong ordering)
@@ -76,10 +106,10 @@ module Parser
 
     def verb(verb,*args)
 #      puts self.inspect
-      @verblist = {} if not defined? @verblist
+      @verblist = [] if not defined? @verblist
       method = args.pop
 #      puts args.inspect
-      @verblist[verb]=Verb.new(verb,method,args)
+      @verblist << Verb.new(verb,method,args)
     end
 
     def primarynoun(&block)
@@ -87,27 +117,6 @@ module Parser
     end
     def noun(&block)
       Noun.new(false,&block)
-    end
-
-    def try_parse(obj,tokens)
-      return if @verblist==nil
-      exceptions = []
-      if @verblist.include? tokens[0]
-        verb = @verblist[tokens[0]]
-        begin
-          # Currently assumes that the first match is good.
-          return verb.try_parse(obj, tokens)
-        rescue InternalParserError
-          puts $!.inspect
-        rescue Exception
-          puts $!.inspect
-          exceptions << [verb, $!]
-        end
-      else
-       puts 'no verb %s %s' % [tokens[0],@verblist.inspect]
-      end
-      raise ParserError,exceptions if exceptions.size!=0
-      return nil
     end
   end
 

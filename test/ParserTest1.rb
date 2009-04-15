@@ -3,7 +3,10 @@ require 'test/unit'
 
 class BackpackObject
  include Parser
-
+  verb "examine", primarynoun, :examine
+  def examine
+   puts self.inspect
+  end 
 end
 
 class Bee < BackpackObject
@@ -13,10 +16,7 @@ class Bee < BackpackObject
   def insert(x)
     puts "insert %s" % x
   end
-  verb "examine", primarynoun, :examine
-  def examine
-   puts self.inspect
-  end 
+
   def inspect
     return "An Bee"
   end
