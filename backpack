@@ -1,4 +1,7 @@
 #!/usr/bin/ruby
+require 'lib/Parser'
+require 'lib/DSLLoader'
+require 'lib/World'
 require 'BackpackDSL'
 
-Backpack::World.new.go
+Backpack::World.new(Backpack::DSLLoader).go
