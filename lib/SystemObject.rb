@@ -1,6 +1,5 @@
 module Backpack
-  class SystemObject
-    include Parser
+  class SystemObject<BackpackParsableObject
     verb "help", :help
     def help
      puts "You need it"

@@ -1,7 +1,9 @@
 module Backpack
 
-  class BackpackObject
-    include Parser
+  class BackpackParsableObject
+      include Parser
+  end
+  class BackpackObject<BackpackParsableObject
     attr_reader :manager
     attr_accessor :name, :short_description, :description, :contains
     def metaclass
