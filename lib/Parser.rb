@@ -128,7 +128,7 @@ module Parser
   end
 
   class Parser
-    def parse(objects,str)
+    def parse(objects, nounlessobjects,str)
       tokens = str.split()
 
       # Find the objects in the string
@@ -143,6 +143,10 @@ module Parser
         end
       end
       exceptions = []
+      # No Nouns found, try implicit search.
+      if foundobjects.size == 0
+       foundobjects = nounlessobjects
+      end
       foundobjects.each do |x|
         begin
           j = x.try_parse(newtokens)
