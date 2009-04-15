@@ -1,32 +1,35 @@
 module Backpack
-  class RoomManager
+  class ObjectManager
     attr_reader :rooms, :startroom
-    def initialize
+    def initialize(dslmanager)
       @rooms = {}
       @startroom = nil
-      @current = nil
+      @current = []
+      @parse_mode = true
+      @dslmanager = dslmanager.new(self)
     end
 
+    def parse_mode(x)
+      @parse_mode = x
+    end
     def [](x)
       return @rooms[x]
     end
 
     def define_room(name, shortdesc, options={}, &block)
-      @current = @rooms[name] = Room.new(name, shortdesc, self, options)
+      a = BackpackRoom.new(name, shortdesc, self, options)
+      @current[-1] << a if @current[-1]!=nil
+      @current.push(@rooms[name] = a)
       instance_eval(&block)
-      return @current
+      @current.pop()
     end
 
     def define_item(name, shortdesc, options={}, &block)
-      @current = @rooms[name] = Item.new(name, shortdesc, self, options)
+      a = Item.new(name, shortdesc, self, options)
+      @current[-1] << a if @current[-1]!=nil
+      @current.push(@rooms[name] = a)
       instance_eval(&block)
-      return @current
-    end
-
-    def item(name, shortdesc, options={}, &block)
-      j = @current
-      j.contains << define_item(name, shortdesc, options, &block)
-      @current = j
+      @current.pop()
     end
 
     def start_room(name, options={})
@@ -55,6 +58,12 @@ module Backpack
 
 
     def method_missing(sym, *args, &block)
+      if @parse_mode and @dslmanager.respond_to?(sym)
+        @dslmanager.send(sym, *args, &block)
+      end
+    end
+    
+    def method_missing_old(sym, *args, &block)
       v=sym.to_s
       if v =~ /exit_([a-zA-Z_]*$)/
         var = args[0]

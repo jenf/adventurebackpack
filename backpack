@@ -3,7 +3,8 @@ require 'lib/Parser'
 require 'lib/DSLLoader'
 require 'lib/World'
 require 'lib/CoreObjects'
-require 'lib/RoomManager'
+require 'lib/ObjectManager'
 require 'lib/Console'
+require 'lib/SystemObject'
 
-Backpack::World.new(Backpack::RoomManager,Backpack::DSLLoader).go
+Backpack::World.new(Backpack::ObjectManager,Backpack::DSLLoader,Backpack::Console,Parser::Parser).go

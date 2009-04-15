@@ -1,8 +1,9 @@
 module Backpack
 
   class BackpackObject
+    include Parser
     attr_reader :manager
-    attr_accessor :short_description, :description, :contains
+    attr_accessor :name, :short_description, :description, :contains
     def metaclass
       class << self; self; end
     end
@@ -17,16 +18,29 @@ module Backpack
     def add_exit(sym,roomto)
       define_method(sym) {@manager[roomto]}
     end
+    
+    def <<(x)
+      @contains << x
+    end
+
+    def examine
+      puts self.inspect
+    end
+    def inspect
+      @short_description + @contains.inspect
+    end
   end
+  
   class Item < BackpackObject
-    attr_accessor :name
+    verb "examine", primarynoun, :examine
     def initialize(name, short_description, manager,options)
       super
     end
   end
 
-  class Room < BackpackObject
-
+  class BackpackRoom < BackpackObject
+    verb "look", :examine
+    
     def initialize(name, short_description, manager,options)
       super
     end
