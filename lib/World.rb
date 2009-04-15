@@ -1,7 +1,8 @@
 module Backpack
   class World<DSLLoader
-    def initialize(dslloader)
-      @dslloader = dslloader.new()
+    def initialize(roommanager, dslloader)
+      @roommanager = roommanager.new()
+      @dslloader = dslloader.new(@roommanager)
     end
     def go
       @dslloader.load(ARGV[0])

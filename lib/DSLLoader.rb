@@ -2,9 +2,9 @@ module Backpack
   class DSLLoader
     attr_reader :load_paths
 
-    def initialize() 
+    def initialize(roommanager) 
       @load_paths = ['.']
-      @roommanager = RoomManager.new
+      @roommanager = roommanager
     end
 
     def load(*args, &block)
