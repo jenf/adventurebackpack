@@ -39,6 +39,22 @@ module Backpack
       @roommanager.define_item(name,shortdesc, options,&block)
     end
 
+    def add_exits(options = {})
+     exits = {}
+     options.each do |x,y|
+      case x
+       when :autoinvert
+       when :autoname
+       else
+        j = y
+        j = [j] if j.class == String # Convert string to array automatically
+        exits[x] = y
+        options.delete(x)
+      end
+     end
+     @roommanager.add_exits_to_room(exits,options)
+    end
+    
     def start_room(name, options={})
       @roommanager.start_room(name,options)
     end

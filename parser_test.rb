@@ -27,7 +27,7 @@ end
 
 @objects = {"bee"=>Bee.new}
 @nounlessobjects = [Player.new]
-@parser = Parser::Parser.new
+@parser =  Parser::Parser.new
 
 def parse_and_exec(str)
   puts str

@@ -7,15 +7,17 @@
 start_room :BeforeForest
 # end
 
-room :BeforeForest,"In front of a cottage" do
+room :BeforeForest,"In front of a cottage",:autoname=>false do
  description "You stand outside a cottage. The forest stretches east."
-# exit_east :Forest
+ add_exits :Forest => "east"
+ name ["building","cottage"]
 end
 
 room :Forest, "Deep in the forest" do
  description "Through the dense foliage, you glimpse a building to the west."
              "A track heads to the northeast."
-# exit_northeast :Clearing
+ add_exits :Clearing =>"northeast"
+ add_exits :BeforeForest=>"west"
  
  item :Bird, "Baby bird" do
   description "Too young to fly, the nestling tweets helplessly."

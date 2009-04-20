@@ -33,13 +33,23 @@ module Backpack
     end
   end
   
+  class BackpackVisibleObject < BackpackObject
+      verb "examine", primarynoun, :examine
+  end
+  
   class Item < BackpackObject
-    verb "examine", primarynoun, :examine
-    def initialize(name, short_description, manager,options)
-      super
-    end
   end
 
+  class BackpackExit < BackpackVisibleObject
+    def initialize(exit, names, manager)
+     super(names, exit.to_s, manager, {})
+    end
+    
+    def exit?
+      true
+    end
+  end
+  
   class BackpackRoom < BackpackObject
     verb "look", :examine
     

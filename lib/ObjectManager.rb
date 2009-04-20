@@ -16,9 +16,21 @@ module Backpack
       return @rooms[x]
     end
 
+    def current_room
+     @current[-1]
+    end
+    
+    def add_exits_to_room(exits,options={})
+      raise 'Not in a room' if current_room == nil
+      exits.each {|x,y|
+        current_room << BackpackExit.new(x,y, self)
+      }
+      puts "exits #{exits.inspect}"
+    end
+    
     def define_room(name, shortdesc, options={}, &block)
       a = BackpackRoom.new(name, shortdesc, self, options)
-      @current[-1] << a if @current[-1]!=nil
+      current_room << a if current_room!=nil
       @current.push(@rooms[name] = a)
       instance_eval(&block)
       @current.pop()
@@ -26,7 +38,7 @@ module Backpack
 
     def define_item(name, shortdesc, options={}, &block)
       a = Item.new(name, shortdesc, self, options)
-      @current[-1] << a if @current[-1]!=nil
+      current_room << a if current_room!=nil
       @current.push(@rooms[name] = a)
       instance_eval(&block)
       @current.pop()
@@ -58,8 +70,13 @@ module Backpack
 
 
     def method_missing(sym, *args, &block)
+      v=sym.to_s
       if @parse_mode and @dslmanager.respond_to?(sym)
         @dslmanager.send(sym, *args, &block)
+      elsif (current_room != nil) and (current_room.respond_to?(v+"="))
+          current_room.send(v+'=', *args, &block)
+      else
+       super
       end
     end
     
