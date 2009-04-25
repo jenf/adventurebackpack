@@ -10,6 +10,11 @@ class BackpackItem < BackpackObject
   def examine
    puts self.inspect
   end 
+  def match_noun(x)
+   puts self.class.to_s
+   return 0 if x[0]==self.class.to_s.downcase
+   return nil
+  end
 end
 
 class Bee < BackpackItem
@@ -23,6 +28,7 @@ class Bee < BackpackItem
   def inspect
     return "An Bee"
   end
+ 
 end
 
 class Jay < BackpackItem
@@ -37,7 +43,9 @@ end
 
 class ParserTest < Test::Unit::TestCase
  def setup
-  @objects = {"bee"=>Bee.new,"jay"=>Jay.new}
+  @bee = Bee.new
+  @jay = Jay.new
+  @objects = [@bee,@jay]
   @nounlessobjects = [Player.new]
   @parser = Parser::Parser.new
  end
@@ -48,8 +56,8 @@ class ParserTest < Test::Unit::TestCase
  
  def test_examine
   assert_nil parse("examine")
-  assert_equal [:examine, @objects["bee"], []], parse("examine bee")
-  assert_equal [:examine, @objects["jay"], []], parse("examine jay")
+  assert_equal [:examine, @bee, []], parse("examine bee")
+  assert_equal [:examine, @jay, []], parse("examine jay")
   assert_nil parse("examine bee bee")
   assert_nil parse("examine fred")
  end
@@ -58,7 +66,7 @@ class ParserTest < Test::Unit::TestCase
   assert_nil parse("put")
   assert_nil parse("put bee")
   assert_nil parse("put jay likeinto bee")
-  assert_equal [:insert, @objects["bee"],[@objects["jay"]]], parse("put jay into bee")
+  assert_equal [:insert, @bee,[@jay]], parse("put jay into bee")
   assert_nil parse("put jay into bee bee")
  end
  
@@ -66,7 +74,7 @@ class ParserTest < Test::Unit::TestCase
   assert_nil parse("specialput")
   assert_nil parse("specialput bee")
   assert_nil parse("specialput jay likeinto bee")
-  assert_equal [:insert, @objects["bee"],[@objects["jay"]]], parse("specialput jay in bee")
+  assert_equal [:insert, @bee,[@jay]], parse("specialput jay in bee")
   assert_nil parse("specialput jay in bee bee")
  end
  
@@ -86,7 +94,7 @@ class ParserTest < Test::Unit::TestCase
 end
 end
 
-  @objects = {"bee"=>Bee.new,"jay"=>Jay.new}
+  @objects = [Bee.new,Jay.new]
   @nounlessobjects = [Player.new]
   @parser = Parser::Parser.new
   puts @parser.parse(@objects, @nounlessobjects, "inventory")
