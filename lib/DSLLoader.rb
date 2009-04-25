@@ -2,9 +2,9 @@ module Backpack
   class DSLLoader
     attr_reader :load_paths
 
-    def initialize(roommanager) 
+    def initialize(objectmanager) 
       @load_paths = ['.']
-      @roommanager = roommanager
+      @objectmanager = objectmanager
     end
 
     def load(*args, &block)
@@ -32,11 +32,11 @@ module Backpack
     end
 
     def room(name, shortdesc, options={}, &block)
-      @roommanager.define_room(name,shortdesc, options,&block)
+      @objectmanager.define_room(name,shortdesc, options,&block)
     end
 
     def item(name, shortdesc, options={}, &block)
-      @roommanager.define_item(name,shortdesc, options,&block)
+      @objectmanager.define_item(name,shortdesc, options,&block)
     end
 
     def add_exits(options = {})
@@ -52,14 +52,14 @@ module Backpack
         options.delete(x)
       end
      end
-     @roommanager.add_exits_to_room(exits,options)
+     @objectmanager.add_exits_to_room(exits,options)
     end
     
     def start_room(name, options={})
-      @roommanager.start_room(name,options)
+      @objectmanager.start_room(name,options)
     end
     def finalise
-      @roommanager.autoinvert_paths
+      @objectmanager.autoinvert_paths
     end
   end
 end
