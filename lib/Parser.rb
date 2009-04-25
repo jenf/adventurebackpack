@@ -36,7 +36,7 @@ module Parser
     verbs = collect_verbs
     self.run_parse(self,verbs,tokens)
   end
-
+  
   # Errors that are internal and not to be shown to the user (wrong ordering)
   class ParserError<Exception
   end
@@ -128,20 +128,44 @@ module Parser
   end
 
   class Parser
-    def parse(objects, nounlessobjects,str)
+    def parse(objects_, nounlessobjects,str)
       tokens = str.split()
 
       # Find the objects in the string
       foundobjects = []
       newtokens = []
-      tokens.each do |x|
-        if objects.include? x
-          foundobjects << objects[x]
-          newtokens << MatchedNoun.new(objects[x])
+      
+      objects = objects_.dup
+      curpos = 0
+      while curpos < (tokens.size)
+        # Be greedy and try and find the longest noun.
+        list = objects.map do |x|
+         j = x.match_noun(tokens[curpos..-1])
+         nil if j == nil
+         [x,j] if j != nil
+        end
+        puts list.inspect
+        list.compact!
+        if list.size == 0
+         newtokens << tokens[curpos]
+         curpos+=1
         else
-          newtokens << x
+         puts "Found %s" % list.inspect
+         # We have items
+         if list.size == 1
+          foundobjects << list[0][0]
+          newtokens << MatchedNoun.new(list[0][0])
+          objects.delete list[0][0]
+          curpos += list[0][1]+1
+         else
+          raise "No disambig code yet"
+         end
+         puts list.inspect
         end
       end
+      puts 'ha'
+      puts newtokens.inspect
+      
       exceptions = []
       # No Nouns found, try implicit search.
       if foundobjects.size == 0

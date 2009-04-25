@@ -10,7 +10,8 @@ module Backpack
       class << self; self; end
     end
     def initialize(name, short_description, manager, options)
-      @name, @manager, @options = name, manager, options
+      @manager, @options = manager, options
+      @name = name.class==String ? [name] : name
       @short_description = short_description
       @contains = []
     end
@@ -30,6 +31,12 @@ module Backpack
     end
     def inspect
       @short_description + @contains.inspect
+    end
+    
+    def match_noun(x)
+     puts @name.inspect
+     return 0 if @name.include?(x[0])
+     return nil
     end
   end
   

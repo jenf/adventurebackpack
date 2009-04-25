@@ -11,8 +11,8 @@ module Backpack
       @objectmanager.parse_mode(false)
       @console.read_loop do |x|
         @nounless = [@objectmanager[:Forest], SystemObject.new]
-        @objects = {"bird"=>@objectmanager[:Forest].contains[0]}
-        j = @parser.parse(@objects,@nounless,x)
+        @objects = @objectmanager[:Forest].contains
+        j = @parser.parse(@objects.dup,@nounless,x)
         if j!=nil
           (method,primary,others)=j
           puts "Execute %s" % j.to_s
