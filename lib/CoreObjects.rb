@@ -30,7 +30,7 @@ module Backpack
       puts self.inspect
     end
     def inspect
-      @short_description + @contains.inspect
+      "#{@name} : #{@short_description}" + @contains.inspect
     end
     
     def match_noun(x)
@@ -48,12 +48,18 @@ module Backpack
   end
 
   class BackpackExit < BackpackVisibleObject
+    verb "go", primarynoun, :go
     def initialize(exit, names, manager)
+     @exit = exit
      super(names, exit.to_s, manager, {})
     end
     
     def exit?
       true
+    end
+    
+    def go
+     manager.set_room(@exit)
     end
   end
   
@@ -72,6 +78,9 @@ module Backpack
         end
       end
       return exits
+    end
+    def inspect
+     @name.inspect
     end
   end
 end

@@ -1,12 +1,13 @@
 module Backpack
   class ObjectManager
     attr_reader :rooms, :startroom
-    def initialize(dslmanager)
+    def initialize(dslmanager, world)
       @rooms = {}
       @startroom = nil
       @current = []
       @parse_mode = true
       @dslmanager = dslmanager.new(self)
+      @world = world
     end
 
     def parse_mode(x)
@@ -71,25 +72,20 @@ module Backpack
 
     def method_missing(sym, *args, &block)
       v=sym.to_s
-      if @parse_mode and @dslmanager.respond_to?(sym)
-        @dslmanager.send(sym, *args, &block)
-      elsif (current_room != nil) and (current_room.respond_to?(v+"="))
+      if @parse_mode
+        if @dslmanager.respond_to?(sym)
+          @dslmanager.send(sym, *args, &block)
+        elsif (current_room != nil) and (current_room.respond_to?(v+"="))
           current_room.send(v+'=', *args, &block)
-      else
-       super
-      end
-    end
-    
-    def method_missing_old(sym, *args, &block)
-      v=sym.to_s
-      if v =~ /exit_([a-zA-Z_]*$)/
-        var = args[0]
-        @current.add_exit(sym,var)
-      else
-        if @current.respond_to?(v+"=")
-          @current.send(v+'=', *args, &block)
         else
           super
+        end
+      else
+        puts @world.inspect
+        if @world.respond_to?(sym)
+         @world.send(sym, *args, &block)
+        else
+         super
         end
       end
     end

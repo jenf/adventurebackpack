@@ -7,4 +7,4 @@ require 'lib/ObjectManager'
 require 'lib/Console'
 require 'lib/SystemObject'
 
-Backpack::World.new(Backpack::ObjectManager,Backpack::DSLLoader,Backpack::Console,Parser::Parser).go
+Backpack::World.new(Backpack::ObjectManager,Backpack::DSLLoader,Backpack::Console,Parser::Parser).start_world
