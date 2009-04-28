@@ -30,10 +30,11 @@ room :Clearing, "A forest clearing" do
              "The path winds southwest through the trees."
 # exit_up :TopOfTree
 # 
-# item :Nest, "Bird's nest", :container=>:open do
-#  description "The nest is carefully woven of twigs and moss."
-#  name ["Nest","twigs", "moss"]
-# end
+ item :Nest, "Bird's nest", :container=>:open do
+  description "The nest is carefully woven of twigs and moss."
+  name ["Nest","twigs", "moss"]
+ end
+ add_exits :TopOfTree=>"up"
 # 
 # item :Tree, "Tree", :collectable=>false do
 #  description "Standing proud in the middle of the clearing,"
@@ -44,11 +45,11 @@ end
 
 room :TopOfTree, "At the top of the tree" do
  description "You cling precariously to the trunk"
-# item :Branch, "Wide firm branch", :supporter=>true do
-#  description "It's flat enough to support a small object."
-#  name ["wide",'firm','flat','bough','branch']
-#  # on_add :Nest {|x| win_game}
-# end
+ item :Branch, "Wide firm branch", :supporter=>true do
+  description "It's flat enough to support a small object."
+  name ["wide",'firm','flat','bough','branch']
+  # on_add :Nest {|x| win_game}
+ end
 end
 
 # player do

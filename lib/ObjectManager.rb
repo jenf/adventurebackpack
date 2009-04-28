@@ -28,17 +28,9 @@ module Backpack
       }
       puts "exits #{exits.inspect}"
     end
-    
-    def define_room(name, shortdesc, options={}, &block)
-      a = BackpackRoom.new(name, shortdesc, self, options)
-      current_room << a if current_room!=nil
-      @current.push(@rooms[name] = a)
-      instance_eval(&block)
-      @current.pop()
-    end
 
-    def define_item(name, shortdesc, options={}, &block)
-      a = BackpackItem.new(name, shortdesc, self, options)
+    def define_item(klass, name, shortdesc, options={}, &block)
+      a = klass.new(name, shortdesc, self, options)
       current_room << a if current_room!=nil
       @current.push(@rooms[name] = a)
       instance_eval(&block)

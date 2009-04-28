@@ -32,11 +32,13 @@ module Backpack
     end
 
     def room(name, shortdesc, options={}, &block)
-      @objectmanager.define_room(name,shortdesc, options,&block)
+      klass = (options[:class] || BackpackRoom)
+      @objectmanager.define_item(klass,name,shortdesc, options,&block)
     end
 
     def item(name, shortdesc, options={}, &block)
-      @objectmanager.define_item(name,shortdesc, options,&block)
+      klass = (options[:class] || BackpackItem)
+      @objectmanager.define_item(klass,name,shortdesc, options,&block)
     end
 
     def add_exits(options = {})
