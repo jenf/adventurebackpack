@@ -37,8 +37,9 @@ module Backpack
       @current.pop()
     end
     
-    def define_player(klass, &block)
-      a = klass.new()
+    def define_player(klass, inventoryklass, &block)
+      b = inventoryklass.new()
+      a = klass.new(b)
       @world.player = a
     end
 

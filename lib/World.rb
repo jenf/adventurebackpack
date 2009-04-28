@@ -19,7 +19,13 @@ module Backpack
     end
     def start_world
       @objectmanager.load(ARGV[0])
-      @player = Player.new() if @player==nil
+      
+      # Define player if not done
+      if @player==nil
+        @objectmanager.player do
+        end
+      end
+      
       @objectmanager.finalise
       @objectmanager.parse_mode(false)
       @currentroom = @objectmanager[@objectmanager.startroom]

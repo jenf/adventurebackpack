@@ -1,7 +1,12 @@
 module Backpack
   class BackpackInventory<Array
     def examine
-      self.map {|x| x.glance}.join(", ")
+      case self.empty?
+       when true
+         "Empty"
+       else
+         self.map {|x| x.glance}.join(", ")
+      end
     end
   end
   

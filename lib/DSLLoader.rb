@@ -66,7 +66,8 @@ module Backpack
     
     def player(options = {},&block)
        klass = (options[:class] || Backpack::Player)
-       @objectmanager.define_player(klass,&block)
+       inventoryklass = (options[:inventory_class] || Backpack::PlayerInventory)
+       @objectmanager.define_player(klass,inventoryklass,&block)
     end
   end
 end
