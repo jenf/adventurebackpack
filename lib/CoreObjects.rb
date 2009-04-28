@@ -62,7 +62,7 @@ module Backpack
   end
   
   class BackpackVisibleObject < BackpackObject
-      verb "examine", primarynoun, :examine
+    verb "examine", primarynoun, :examine
   end
   
   class BackpackItem < BackpackVisibleObject
