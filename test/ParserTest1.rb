@@ -1,5 +1,6 @@
 require 'lib/Parser.rb'
 require 'test/unit'
+require 'logger'
 
 class BackpackObject
  include Parser
@@ -47,7 +48,7 @@ class ParserTest < Test::Unit::TestCase
   @jay = Jay.new
   @objects = [@bee,@jay]
   @nounlessobjects = [Player.new]
-  @parser = Parser::Parser.new
+  @parser = Parser
  end
 
  def parse(str)
@@ -83,7 +84,7 @@ class ParserTest < Test::Unit::TestCase
   assert_equal [:inventory, @nounlessobjects[0],[]], parse("inventory")
  end
  def parse_and_exec(str)
-  puts str
+  #puts str
   j = @parser.parse(@objects,@nounlessobjects, str)
   if j!=nil
     (method,primary,others)=j
@@ -94,7 +95,10 @@ class ParserTest < Test::Unit::TestCase
 end
 end
 
-  @objects = [Bee.new,Jay.new]
-  @nounlessobjects = [Player.new]
-  @parser = Parser::Parser.new
-  puts @parser.parse(@objects, @nounlessobjects, "inventory")
+logger = Logger.new(STDOUT)
+logger.level = Logger::INFO
+Parser.logger = logger
+@objects = [Bee.new,Jay.new]
+@nounlessobjects = [Player.new]
+@parser = Parser
+puts @parser.parse(@objects, @nounlessobjects, "inventory")
