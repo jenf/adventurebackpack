@@ -36,6 +36,11 @@ module Backpack
       instance_eval(&block)
       @current.pop()
     end
+    
+    def define_player(klass, &block)
+      a = klass.new()
+      @world.player = a
+    end
 
     def start_room(name, options={})
       @startroom=name

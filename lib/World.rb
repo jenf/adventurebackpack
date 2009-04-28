@@ -15,17 +15,18 @@ module Backpack
       @console = console.new()
       @parser = parser
       @systemobject = SystemObject.new(self)
-
+      @player = nil
     end
     def start_world
       @objectmanager.load(ARGV[0])
+      @player = Player.new() if @player==nil
       @objectmanager.finalise
       @objectmanager.parse_mode(false)
       @currentroom = @objectmanager[@objectmanager.startroom]
       @console.puts @currentroom.examine
       
       @console.read_loop do |x|
-        @nounless = [@currentroom, @systemobject]
+        @nounless = [@currentroom, @systemobject, @player]
         @objects = @currentroom.contains
         Backpack.logger.debug(@objects.inspect)
         j = @parser.parse(@objects.dup,@nounless,x)
@@ -43,6 +44,9 @@ module Backpack
     
     def set_room(room)
       @currentroom = @objectmanager[room]
+    end
+    def player=(player)
+      @player = player
     end
   end
 end

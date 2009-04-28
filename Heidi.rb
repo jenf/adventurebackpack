@@ -52,6 +52,6 @@ room :TopOfTree, "At the top of the tree" do
  end
 end
 
-# player do
+player do
  # inventory :size=>1
-# end
+end

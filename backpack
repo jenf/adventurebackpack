@@ -6,6 +6,7 @@ require 'lib/CoreObjects'
 require 'lib/ObjectManager'
 require 'lib/Console'
 require 'lib/SystemObject'
+require 'lib/Player'
 logger = Logger.new(STDOUT)
 logger.level = Logger::INFO
 Parser.logger = logger

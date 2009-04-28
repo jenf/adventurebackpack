@@ -63,5 +63,10 @@ module Backpack
     def finalise
       @objectmanager.autoinvert_paths
     end
+    
+    def player(options = {},&block)
+       klass = (options[:class] || Backpack::Player)
+       @objectmanager.define_player(klass,&block)
+    end
   end
 end
