@@ -38,7 +38,7 @@ module Backpack
     end
 
     def define_item(name, shortdesc, options={}, &block)
-      a = Item.new(name, shortdesc, self, options)
+      a = BackpackItem.new(name, shortdesc, self, options)
       current_room << a if current_room!=nil
       @current.push(@rooms[name] = a)
       instance_eval(&block)
@@ -81,7 +81,6 @@ module Backpack
           super
         end
       else
-        puts @world.inspect
         if @world.respond_to?(sym)
          @world.send(sym, *args, &block)
         else

@@ -14,7 +14,7 @@ room :BeforeForest,"In front of a cottage",:autoname=>false do
 end
 
 room :Forest, "Deep in the forest" do
- description "Through the dense foliage, you glimpse a building to the west."
+ description "Through the dense foliage, you glimpse a building to the west.\n" \
              "A track heads to the northeast."
  add_exits :Clearing =>"northeast"
  add_exits :BeforeForest=>"west"

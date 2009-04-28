@@ -6,5 +6,8 @@ require 'lib/CoreObjects'
 require 'lib/ObjectManager'
 require 'lib/Console'
 require 'lib/SystemObject'
-
-Backpack::World.new(Backpack::ObjectManager,Backpack::DSLLoader,Backpack::Console,Parser::Parser).start_world
+logger = Logger.new(STDOUT)
+logger.level = Logger::INFO
+Parser.logger = logger
+Backpack.logger = logger
+Backpack::World.new(Backpack::ObjectManager,Backpack::DSLLoader,Backpack::Console,Parser).start_world

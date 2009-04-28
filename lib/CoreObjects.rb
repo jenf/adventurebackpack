@@ -1,5 +1,10 @@
 module Backpack
-
+  class BackpackInventory<Array
+    def examine
+      self.map {|x| x.glance}.join(", ")
+    end
+  end
+  
   class BackpackParsableObject
       include Parser
   end
@@ -13,7 +18,7 @@ module Backpack
       @manager, @options = manager, options
       @name = name.class==String ? [name] : name
       @short_description = short_description
-      @contains = []
+      @contains = BackpackInventory.new
     end
     def define_method(name, &block)
       metaclass.send(:define_method, name, &block)
@@ -26,17 +31,33 @@ module Backpack
       @contains << x
     end
 
-    def examine
-      puts self.inspect
-    end
-    def inspect
-      "#{@name} : #{@short_description}" + @contains.inspect
+    def glance
+      short_description
     end
     
+    def examine
+      description + "\n" + contains.examine
+    end
+    
+    def examine_contents
+      contains.inspect
+    end
+#    def inspect
+#      "#{@name} : #{@short_description}" + @contains.inspect
+#    end
+    
     def match_noun(x)
-     puts @name.inspect
+     Backpack.logger.info("%s *%s* %s" % [@name.inspect,x[0],@name.include?(x[0])])
      return 0 if @name.include?(x[0])
      return nil
+    end
+    
+    def exit?
+      false
+    end
+    
+    def item?
+      false
     end
   end
   
@@ -44,7 +65,10 @@ module Backpack
       verb "examine", primarynoun, :examine
   end
   
-  class Item < BackpackObject
+  class BackpackItem < BackpackVisibleObject
+    def item?
+      false
+    end
   end
 
   class BackpackExit < BackpackVisibleObject
@@ -60,6 +84,11 @@ module Backpack
     
     def go
      manager.set_room(@exit)
+     manager.currentroom.examine
+    end
+    
+    def examine
+     manager[@exit].short_description
     end
   end
   

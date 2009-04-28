@@ -1,8 +1,8 @@
 require 'readline'
 module Backpack
   class Console
-    def output(x)
-      puts (x)
+    def puts(x)
+      super
     end
     
     def read_loop

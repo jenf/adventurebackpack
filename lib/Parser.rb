@@ -1,5 +1,11 @@
 # Attempt to make object based system, not verb based.
 module Parser
+  def self.logger
+    return @logger
+  end
+  def self.logger=(x)
+    @logger=x
+  end
   def self.included(base)
     base.extend ParserReal
   end
@@ -127,62 +133,59 @@ module Parser
     end
   end
 
-  class Parser
-    def parse(objects_, nounlessobjects,str)
-      tokens = str.split()
+  def self.parse(objects_, nounlessobjects,str)
+    tokens = str.split()
 
-      # Find the objects in the string
-      foundobjects = []
-      newtokens = []
-      
-      objects = objects_.dup
-      curpos = 0
-      while curpos < (tokens.size)
-        # Be greedy and try and find the longest noun.
-        list = objects.map do |x|
-         j = x.match_noun(tokens[curpos..-1])
-         nil if j == nil
-         [x,j] if j != nil
-        end
-        puts list.inspect
-        list.compact!
-        if list.size == 0
-         newtokens << tokens[curpos]
-         curpos+=1
-        else
-         puts "Found %s" % list.inspect
-         # We have items
-         if list.size == 1
-          foundobjects << list[0][0]
-          newtokens << MatchedNoun.new(list[0][0])
-          objects.delete list[0][0]
-          curpos += list[0][1]+1
-         else
-          raise "No disambig code yet"
-         end
-         puts list.inspect
-        end
+    # Find the objects in the string
+    foundobjects = []
+    newtokens = []
+    
+    objects = objects_.dup
+    curpos = 0
+    while curpos < (tokens.size)
+      # Be greedy and try and find the longest noun.
+      list = objects.map do |x|
+       j = x.match_noun(tokens[curpos..-1])
+       nil if j == nil
+       [x,j] if j != nil
       end
-      puts 'ha'
-      puts newtokens.inspect
-      
-      exceptions = []
-      # No Nouns found, try implicit search.
-      if foundobjects.size == 0
-       foundobjects = nounlessobjects
+      logger.debug(list.inspect)
+      list.compact!
+      if list.size == 0
+       newtokens << tokens[curpos]
+       curpos+=1
+      else
+       logger.debug("Found %s" % list.inspect)
+       # We have items
+       if list.size == 1
+        foundobjects << list[0][0]
+        newtokens << MatchedNoun.new(list[0][0])
+        objects.delete list[0][0]
+        curpos += list[0][1]+1
+       else
+        raise "No disambig code yet"
+       end
       end
-      foundobjects.each do |x|
-        begin
-          j = x.try_parse(newtokens)
-          puts j.inspect
-          return j if j!= nil
-        rescue ParserError
-          puts $!.inspect
-        end
-      end
-      return nil
     end
 
+#      puts newtokens.inspect
+    
+    exceptions = []
+    # No Nouns found, try implicit search.
+    if foundobjects.size == 0
+     foundobjects = nounlessobjects
+    end
+    foundobjects.each do |x|
+      begin
+        j = x.try_parse(newtokens)
+#          puts j.inspect
+        return j if j!= nil
+      rescue ParserError
+#          puts $!.inspect
+      end
+    end
+    return nil
   end
+
 
 end
