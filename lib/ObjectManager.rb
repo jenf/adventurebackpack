@@ -43,6 +43,12 @@ module Backpack
       @world.player = a
     end
 
+    def define_world(&block)
+      raise 'Trying to define a world inside a room' if current_room!=nil
+      @current.push(@world)
+      instance_eval(&block)
+      @current.pop()
+    end
     def start_room(name, options={})
       @startroom=name
     end

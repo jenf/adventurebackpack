@@ -10,6 +10,7 @@ module Backpack
   
   class World
     attr_reader :currentroom
+    attr_accessor :description
     def initialize(objectmanager, dslloader, console, parser)
       @objectmanager = objectmanager.new(dslloader, self)
       @console = console.new()
@@ -17,6 +18,7 @@ module Backpack
       @systemobject = SystemObject.new(self)
       @player = nil
     end
+    
     def start_world
       @objectmanager.load(ARGV[0])
       
@@ -25,8 +27,11 @@ module Backpack
         @objectmanager.player do
         end
       end
-      
+
       @objectmanager.finalise
+      @console.puts description if description!=nil
+      @console.puts
+      
       @objectmanager.parse_mode(false)
       @currentroom = @objectmanager[@objectmanager.startroom]
       @console.puts @currentroom.examine

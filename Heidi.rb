@@ -1,11 +1,9 @@
 # Heidi Example for Adventure Backpack
-
-
-# world do
-# description "A simple Inform example"
-#             "by Roger Firth and Sonja Kesserich. (Ported by Jennifer Freeman)"
-start_room :BeforeForest
-# end
+world do
+ description "A simple Inform example\n" \
+             "by Roger Firth and Sonja Kesserich. (Ported by Jennifer Freeman)"
+ start_room :BeforeForest
+end
 
 room :BeforeForest,"In front of a cottage",:autoname=>false do
  description "You stand outside a cottage. The forest stretches east."
@@ -28,8 +26,6 @@ end
 room :Clearing, "A forest clearing" do
  description "A tall sycamore stands in the middle of this clearing."
              "The path winds southwest through the trees."
-# exit_up :TopOfTree
-# 
  item :Nest, "Bird's nest", :container=>:open do
   description "The nest is carefully woven of twigs and moss."
   name ["Nest","twigs", "moss"]

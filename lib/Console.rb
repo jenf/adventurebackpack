@@ -1,7 +1,7 @@
 require 'readline'
 module Backpack
   class Console
-    def puts(x)
+    def puts(*args)
       super
     end
     
